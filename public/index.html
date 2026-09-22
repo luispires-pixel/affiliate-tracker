@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Affiliate Tracker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen">
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+      <div>
+        <h1 class="text-2xl font-bold">Affiliate Tracker</h1>
+        <p class="text-slate-400">Links rastreáveis e analytics de afiliados</p>
+      </div>
+      <button id="logoutBtn" class="hidden rounded-lg bg-slate-800 px-4 py-2 hover:bg-slate-700">Sair</button>
+    </header>
+
+    <section id="loginView" class="max-w-md mx-auto mt-16 bg-slate-900 border border-slate-800 rounded-2xl p-6">
+      <h2 class="text-xl font-semibold mb-4">Entrar no painel</h2>
+      <form id="loginForm" class="space-y-3">
+        <input id="username" class="w-full bg-slate-800 rounded-lg px-3 py-2 outline-none" placeholder="Usuário" autocomplete="username">
+        <input id="password" type="password" class="w-full bg-slate-800 rounded-lg px-3 py-2 outline-none" placeholder="Senha" autocomplete="current-password">
+        <button class="w-full bg-indigo-600 hover:bg-indigo-500 rounded-lg px-4 py-2 font-medium">Entrar</button>
+      </form>
+      <p id="loginMsg" class="text-red-400 text-sm mt-3"></p>
+    </section>
+
+    <section id="dashboard" class="hidden">
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
+        <h2 class="text-lg font-semibold mb-4">Criar link rastreável</h2>
+        <form id="linkForm" class="grid md:grid-cols-[1fr_2fr_auto] gap-3">
+          <input id="productName" required maxlength="200" class="bg-slate-800 rounded-lg px-3 py-2" placeholder="Nome do produto">
+          <input id="destinationUrl" required type="url" class="bg-slate-800 rounded-lg px-3 py-2" placeholder="https://www.mercadolivre.com.br/...">
+          <button class="bg-emerald-600 hover:bg-emerald-500 rounded-lg px-5 py-2 font-medium">Gerar link</button>
+        </form>
+        <div id="createdLink" class="hidden mt-4 bg-slate-800 rounded-lg p-3"></div>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <p class="text-slate-400 text-sm">Cliques</p><p id="totalClicks" class="text-3xl font-bold mt-1">0</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <p class="text-slate-400 text-sm">Produtos clicados</p><p id="productsClicked" class="text-3xl font-bold mt-1">0</p>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5">
+          <p class="text-slate-400 text-sm">Links criados</p><p id="linksCount" class="text-3xl font-bold mt-1">0</p>
+        </div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6">
+        <div class="flex flex-col lg:flex-row gap-3 mb-5">
+          <input id="from" type="date" class="bg-slate-800 rounded-lg px-3 py-2">
+          <input id="to" type="date" class="bg-slate-800 rounded-lg px-3 py-2">
+          <select id="platform" class="bg-slate-800 rounded-lg px-3 py-2">
+            <option value="">Todas as plataformas</option>
+            <option>Mercado Livre</option><option>Shopee</option><option>Amazon</option><option>Outro</option>
+          </select>
+          <input id="productFilter" class="bg-slate-800 rounded-lg px-3 py-2 flex-1" placeholder="Filtrar produto">
+          <button id="filterBtn" class="bg-indigo-600 rounded-lg px-5 py-2">Filtrar</button>
+        </div>
+        <div class="h-72"><canvas id="chart"></canvas></div>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 mb-6 overflow-x-auto">
+        <h2 class="font-semibold mb-4">Links</h2>
+        <table class="w-full text-sm">
+          <thead class="text-slate-400"><tr><th class="text-left p-2">Produto</th><th>Plataforma</th><th>Cliques</th><th>Link</th></tr></thead>
+          <tbody id="linksTable"></tbody>
+        </table>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 overflow-x-auto">
+        <h2 class="font-semibold mb-4">Histórico de cliques</h2>
+        <table class="w-full text-sm">
+          <thead class="text-slate-400"><tr><th class="text-left p-2">Data/hora</th><th>Produto</th><th>Plataforma</th><th>Dispositivo</th><th>Navegador</th><th>Local aproximado</th></tr></thead>
+          <tbody id="historyTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+</html>

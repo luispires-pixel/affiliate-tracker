@@ -14,7 +14,12 @@ import { fileURLToPath } from "node:url";
 const { Pool } = pg;
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
-const BASE_URL = (process.env.BASE_URL || `http://localhost:${PORT}`).replace(/\/$/, "");
+const BASE_URL = (
+  process.env.BASE_URL ||
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}`
+    : `http://localhost:${PORT}`)
+).replace(/\/$/, "");
 const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET || JWT_SECRET.length < 32) {
@@ -121,14 +126,6 @@ function validateDestination(raw) {
 function getClientIp(req) {
   // Express trust proxy + req.ip gives the client IP behind a trusted proxy.
   return req.ip || req.socket.remoteAddress || "";
-}
-
-async function initDb() {
-  const sql = await (await import("node:fs/promises")).readFile(
-    path.join(__dirname, "schema.sql"),
-    "utf8"
-  );
-  await pool.query(sql);
 }
 
 app.get("/healthz", async (_req, res) => {
@@ -354,18 +351,4 @@ app.use((err, _req, res, _next) => {
   res.status(500).json({ error: "Erro interno do servidor." });
 });
 
-initDb()
-  .then(() => {
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`Affiliate Tracker rodando em ${BASE_URL}`);
-    });
-  })
-  .catch((err) => {
-    console.error("Falha ao inicializar banco:", err);
-    process.exit(1);
-  });
-
-process.on("SIGTERM", async () => {
-  await pool.end();
-  process.exit(0);
-});
+export default app;
